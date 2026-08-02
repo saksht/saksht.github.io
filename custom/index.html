@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pexpo // HTB Writeups</title>
+<meta name="description" content="HackTheBox machine writeups by Pexpo. Active Directory, web exploitation, privilege escalation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e14;--bg-soft:#0f1520;--surface:#121a27;--surface-hi:#18222f;
+  --line:#1f2b3a;--text:#e8edf4;--text-dim:#8595a8;--text-faint:#5a6b80;
+  --accent:#4d9fff;--accent-glow:rgba(77,159,255,0.35);
+  --danger:#ff5c5c;--danger-glow:rgba(255,92,92,0.3);--success:#3ddc84;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:0.12;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 70%);z-index:0;pointer-events:none}
+
+/* CURSOR */
+*{cursor:none!important}
+#cur-dot,#cur-ring{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:9999;opacity:0;will-change:transform;transition:opacity .3s}
+#cur-dot{width:10px;height:10px;background:radial-gradient(circle at 35% 35%,#fff,#4d9fff 50%,#1b4fa0);box-shadow:0 0 10px 3px rgba(77,159,255,0.9),0 0 28px 6px rgba(77,159,255,0.3)}
+#cur-ring{width:34px;height:34px;border:1.5px solid rgba(77,159,255,0.55);transition:opacity .3s,width .18s,height .18s,border-color .18s}
+@media(max-width:720px){#cur-dot,#cur-ring{display:none}*{cursor:auto!important}}
+@media(prefers-reduced-motion:reduce){#cur-dot,#cur-ring{display:none}*{cursor:auto!important}}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);background:rgba(10,14,20,0.75);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1080px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.02em;display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.nav-links{display:flex;gap:28px;font-size:14px;font-weight:500}
+.nav-links a{color:var(--text-dim);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--accent)}
+@media(max-width:640px){.nav-links{gap:16px;font-size:13px}}
+
+/* HERO */
+.hero{padding:110px 0 80px}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:0.08em;margin-bottom:24px;opacity:0;animation:fadeUp .6s .1s forwards}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(40px,7vw,74px);line-height:1.02;letter-spacing:-0.03em;margin-bottom:24px;opacity:0;animation:fadeUp .7s .25s forwards}
+.hero h1 .grad{background:linear-gradient(120deg,var(--accent),#7dc4ff 60%,var(--text));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:18px;color:var(--text-dim);max-width:540px;margin-bottom:40px;opacity:0;animation:fadeUp .7s .4s forwards}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fadeUp .7s .55s forwards}
+.btn{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;padding:13px 26px;border-radius:10px;text-decoration:none;transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:9px}
+.btn-primary{background:var(--accent);color:#04121f;box-shadow:0 4px 24px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow)}
+.btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.btn-ghost:hover{transform:translateY(-2px);border-color:var(--accent);color:var(--accent)}
+
+/* TERMINAL */
+.terminal{margin-top:56px;background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.5);opacity:0;animation:fadeUp .8s .7s forwards}
+.term-bar{background:var(--surface);padding:13px 18px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.term-bar .c{width:12px;height:12px;border-radius:50%}
+.c1{background:#ff5f57}.c2{background:#febc2e}.c3{background:#28c840}
+.term-title{margin-left:12px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-faint)}
+.term-body{padding:24px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.9;min-height:180px}
+.prompt{color:var(--success)}.path{color:var(--accent)}.out{color:var(--text-dim)}.hl{color:var(--text);font-weight:500}
+.cursor{display:inline-block;width:9px;height:17px;background:var(--accent);vertical-align:text-bottom;animation:blink 1s step-end infinite;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* MACHINES */
+.sec{padding:70px 0}
+.sec-eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:0.1em;margin-bottom:12px}
+.sec h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);letter-spacing:-0.02em;margin-bottom:40px}
+.machines{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;text-decoration:none;color:inherit;display:block;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;opacity:0;transform:translateY(28px)}
+.card.in{opacity:1;transform:translateY(0);transition:opacity .5s,transform .5s,border-color .25s,box-shadow .25s}
+.card::after{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(130deg,var(--accent),transparent 40%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s}
+.card:hover{transform:translateY(-5px)!important;border-color:transparent;box-shadow:0 16px 48px rgba(0,0,0,0.4)}
+.card:hover::after{opacity:1}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.01em}
+.tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase}
+.tag.insane{background:var(--danger-glow);color:var(--danger)}
+.tag.easy{background:rgba(61,220,132,0.18);color:#3ddc84}
+.card-meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-faint);margin-bottom:14px}
+.card-meta .os{color:var(--accent)}
+.card-chain{font-size:14px;color:var(--text-dim);line-height:1.7}
+.card-arrow{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);font-weight:500;display:inline-flex;align-items:center;gap:7px;transition:gap .2s}
+.card:hover .card-arrow{gap:12px}
+
+/* FOCUS */
+.focus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.focus-card{background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;padding:24px;opacity:0;transform:translateY(22px)}
+.focus-card.in{opacity:1;transform:translateY(0);transition:opacity .5s,transform .5s}
+.focus-card h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;margin-bottom:10px}
+.focus-card h3 .ico{color:var(--accent);margin-right:8px}
+.focus-card p{font-size:14px;color:var(--text-dim)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:44px 0;margin-top:40px}
+.foot-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px}
+.foot-brand{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;display:flex;align-items:center;gap:8px}
+.foot-brand .dot{width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block}
+.foot-links{display:flex;gap:20px}
+.foot-links a{color:var(--text-dim);text-decoration:none;font-size:14px;transition:color .2s}
+.foot-links a:hover{color:var(--accent)}
+.foot-note{color:var(--text-faint);font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:14px}
+
+/* WAIFU */
+#l2d-wrap{position:fixed;left:0;bottom:0;width:200px;height:300px;z-index:90;pointer-events:none;transition:opacity .4s,transform .4s;overflow:hidden}
+#l2d-wrap.hidden{opacity:0;transform:translateY(60px)}
+#l2d-canvas{width:100%;height:100%;pointer-events:auto}
+#l2d-hide{position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:var(--surface);border:1px solid var(--line);color:var(--text-dim);font-size:14px;line-height:1;pointer-events:auto;opacity:0;transition:opacity .25s;z-index:2}
+#l2d-wrap:hover #l2d-hide{opacity:1}
+#l2d-hide:hover{color:var(--danger);border-color:var(--danger)}
+#l2d-show{position:fixed;left:16px;bottom:16px;z-index:90;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);color:var(--accent);display:none;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:transform .2s}
+#l2d-show:hover{transform:translateY(-3px);border-color:var(--accent)}
+
+/* SPEECH BUBBLE */
+#l2d-bubble{position:fixed;left:16px;bottom:310px;max-width:220px;z-index:95;background:#fff;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .25s,transform .25s;pointer-events:none;line-height:1.4}
+#l2d-bubble.show{opacity:1;transform:translateY(0) scale(1)}
+#l2d-bubble::after{content:'';position:absolute;left:16px;bottom:-6px;width:12px;height:12px;background:#fff;transform:rotate(45deg);box-shadow:3px 3px 5px rgba(0,0,0,0.08)}
+@media(max-width:720px){#l2d-bubble,#l2d-wrap{display:none}}
+@media(prefers-reduced-motion:reduce){#l2d-wrap{display:none}}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- custom cursor -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="brand"><span class="dot"></span>pexpo</a>
+    <div class="nav-links">
+      <a href="#machines">Machines</a>
+      <a href="#focus">Focus</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://app.hackthebox.com/users/2753500" target="_blank">HTB</a>
+      <a href="https://github.com/saksht" target="_blank">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-eyebrow">// offensive security · active directory · web exploitation</div>
+    <h1>Rooting boxes,<br><span class="grad">documenting the path.</span></h1>
+    <p class="hero-sub">HackTheBox machine writeups by Pexpo. Full attack chains — the enumeration, the exploitation, the dead ends, and everything learned getting from foothold to root.</p>
+    <div class="hero-cta">
+      <a href="#machines" class="btn btn-primary">Browse writeups →</a>
+      <a href="https://app.hackthebox.com/users/2753500" target="_blank" class="btn btn-ghost">HTB Profile</a>
+    </div>
+    <div class="terminal">
+      <div class="term-bar">
+        <span class="c c1"></span><span class="c c2"></span><span class="c c3"></span>
+        <span class="term-title">pexpo@htb: ~</span>
+      </div>
+      <div class="term-body" id="term"></div>
+    </div>
+  </div>
+</header>
+
+<section class="sec" id="machines">
+  <div class="wrap">
+    <div class="sec-eyebrow">// pwned &amp; documented</div>
+    <h2>Machine writeups</h2>
+    <div class="machines">
+      <a href="writeups/hercules/" class="card reveal">
+        <div class="card-top"><span class="card-name">Hercules</span><span class="tag insane">Insane</span></div>
+        <div class="card-meta"><span class="os">Windows AD</span> · Kerberos-only</div>
+        <div class="card-chain">LDAP injection → LFI cookie forge → ODT NTLM capture → Shadow creds → ESC3 → S4U session key trick → DCSync</div>
+        <div class="card-arrow">read writeup →</div>
+      </a>
+      <a href="writeups/odyssey/" class="card reveal">
+        <div class="card-top"><span class="card-name">Odyssey</span><span class="tag insane">Insane</span></div>
+        <div class="card-meta"><span class="os">Windows</span> · Linux entry</div>
+        <div class="card-chain">WebAuthn bypass → MongoDB injection → LaTeX file read → JSONPath RCE → MSSQL → Named pipe abuse</div>
+        <div class="card-arrow">read writeup →</div>
+      </a>
+      <a href="writeups/pingpong/" class="card reveal">
+        <div class="card-top"><span class="card-name">PingPong</span><span class="tag insane">Insane</span></div>
+        <div class="card-meta"><span class="os">Dual-Forest AD</span> · cross-realm</div>
+        <div class="card-chain">ESC13 → chisel pivot → cross-realm Kerberos → gMSA extraction → JEA XXE → RBCD → GodPotato → ESC4/ESC1</div>
+        <div class="card-arrow">read writeup →</div>
+      </a>
+      <a href="writeups/cohort/" class="card reveal">
+        <div class="card-top"><span class="card-name">Cohort</span><span class="tag easy">Easy</span></div>
+        <div class="card-meta"><span class="os">Linux</span> · CVE chain</div>
+        <div class="card-chain">SSRF 0.0.0.0 bypass → internal marimo 0.20.4 → CVE-2026-39987 pre-auth RCE → CVE-2026-41651 PackageKit TOCTOU → root</div>
+        <div class="card-arrow">read writeup →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="focus">
+  <div class="wrap">
+    <div class="sec-eyebrow">// specialization</div>
+    <h2>Focus areas</h2>
+    <div class="focus-grid">
+      <div class="focus-card reveal-f">
+        <h3><span class="ico">◆</span>Active Directory</h3>
+        <p>Kerberos abuse, ADCS escalations (ESC1/3/4/13), RBCD, constrained &amp; unconstrained delegation, cross-forest trust attacks.</p>
+      </div>
+      <div class="focus-card reveal-f">
+        <h3><span class="ico">◆</span>Web Exploitation</h3>
+        <p>Injection, SSRF, prototype pollution, authentication bypasses, template injection, and chaining primitives into RCE.</p>
+      </div>
+      <div class="focus-card reveal-f">
+        <h3><span class="ico">◆</span>Privilege Escalation</h3>
+        <p>Windows &amp; Linux privesc — token abuse, service misconfigurations, kernel exploits, and SYSTEM via named pipes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div class="foot-brand"><span class="dot"></span>pexpo</div>
+      <div class="foot-links">
+        <a href="https://app.hackthebox.com/users/2753500" target="_blank">HackTheBox</a>
+        <a href="/blog/">Blog</a>
+        <a href="https://github.com/saksht" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/akshat-singh-0971832b5" target="_blank">LinkedIn</a>
+      </div>
+    </div>
+    <div class="foot-note">// self-taught · pursuing OSCP &amp; CRTP · targeting red team roles</div>
+  </div>
+</footer>
+
+<!-- Waifu -->
+<div id="l2d-wrap">
+  <canvas id="l2d-canvas"></canvas>
+  <button id="l2d-hide">×</button>
+</div>
+<div id="l2d-bubble"></div>
+<button id="l2d-show">◕</button>
+
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
+<script>window.PIXI=PIXI;</script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+
+<script>
+// ---- CURSOR ----
+(function(){
+  var dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+  if(!dot)return;
+  var mx=0,my=0,ox=0,oy=0,rx=0,ry=0,shown=false;
+  window.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    if(!shown){dot.style.opacity='1';ring.style.opacity='1';shown=true;}
+  },{passive:true});
+  window.addEventListener('mouseleave',function(){dot.style.opacity='0';ring.style.opacity='0';shown=false;});
+  (function loop(){
+    ox+=(mx-ox)*0.4;oy+=(my-oy)*0.4;
+    rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+    dot.style.transform='translate('+(ox-5)+'px,'+(oy-5)+'px)';
+    ring.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)';
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener('mouseover',function(e){
+    if(e.target.closest('a,button')){ring.style.width='54px';ring.style.height='54px';ring.style.borderColor='rgba(125,196,255,0.9)';}
+    else{ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(77,159,255,0.55)';}
+  });
+})();
+
+// ---- TERMINAL ----
+var LINES=[
+  {t:'<span class="prompt">pexpo@htb</span>:<span class="path">~</span>$ whoami',d:45},
+  {t:'<span class="out">akshat singh — offensive security researcher</span>',d:14,pre:250},
+  {t:'<span class="prompt">pexpo@htb</span>:<span class="path">~</span>$ cat focus.txt',d:45,pre:400},
+  {t:'<span class="out">active directory · web exploitation · privesc</span>',d:14,pre:250},
+  {t:'<span class="prompt">pexpo@htb</span>:<span class="path">~</span>$ ls writeups/',d:45,pre:400},
+  {t:'<span class="hl">hercules  odyssey  pingpong  cohort</span>  <span class="out"># all rooted</span>',d:14,pre:250},
+  {t:'<span class="prompt">pexpo@htb</span>:<span class="path">~</span>$ <span class="cursor"></span>',d:0,pre:400,raw:true},
+];
+var term=document.getElementById('term'),li=0;
+function typeLine(){
+  if(li>=LINES.length)return;
+  var line=LINES[li];
+  var div=document.createElement('div');
+  term.appendChild(div);
+  if(line.raw){div.innerHTML=line.t;return;}
+  var tmp=document.createElement('div');tmp.innerHTML=line.t;
+  var plain=tmp.textContent;
+  var i=0;
+  function step(){
+    if(i<=plain.length){div.textContent=plain.slice(0,i);i++;setTimeout(step,line.d);}
+    else{div.innerHTML=line.t;li++;setTimeout(typeLine,LINES[li]?LINES[li].pre||200:0);}
+  }
+  step();
+}
+setTimeout(typeLine,500);
+
+// ---- SCROLL REVEAL ----
+var obs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('in');},i*90);obs.unobserve(e.target);}});
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
+var obs2=new IntersectionObserver(function(entries){
+  entries.forEach(function(e,i){if(e.isIntersecting){setTimeout(function(){e.target.classList.add('in');},i*120);obs2.unobserve(e.target);}});
+},{threshold:0.15});
+document.querySelectorAll('.reveal-f').forEach(function(el){obs2.observe(el);});
+
+// ---- LIVE2D ----
+window.addEventListener('load',function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var MODEL='/live2d/model/hiyori_free_t08.model3.json';
+  var wrap=document.getElementById('l2d-wrap');
+  var hideBtn=document.getElementById('l2d-hide');
+  var showBtn=document.getElementById('l2d-show');
+  var bubble=document.getElementById('l2d-bubble');
+  if(!window.PIXI||!PIXI.live2d){return;}
+  if(PIXI.live2d.Live2DModel&&PIXI.Ticker){PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);}
+  var app=new PIXI.Application({view:document.getElementById('l2d-canvas'),autoStart:true,resizeTo:wrap,backgroundAlpha:0,antialias:true});
+  PIXI.live2d.Live2DModel.from(MODEL,{autoInteract:false}).then(function(model){
+    app.stage.addChild(model);
+    window.__l2dModel=model;
+    function fit(){
+      var mh=(model.internalModel&&model.internalModel.height)?model.internalModel.height:model.height;
+      var s=(app.renderer.height/mh)*2.1;
+      model.scale.set(s);
+      model.x=app.renderer.width/2;
+      model.y=app.renderer.height*0.06;
+      model.anchor.set(0.5,0);
+    }
+    fit();
+    window.addEventListener('resize',fit);
+    // deliberate tracking
+    var tX=window.innerWidth/2,tY=window.innerHeight/2,fX=tX,fY=tY;
+    window.addEventListener('mousemove',function(e){tX=e.clientX;tY=e.clientY;},{passive:true});
+    app.ticker.add(function(){
+      if(wrap.classList.contains('hidden'))return;
+      fX+=(tX-fX)*0.06;fY+=(tY-fY)*0.06;
+      model.focus(fX,fY);
+    });
+    // TAP BUBBLES
+    var MSGS=['Stop poking me! It tickles!','Was that just an accidental touch?','Hey, I\'m reading writeups here','root access denied','Focus on the writeups, not me~','One more poke and I\'m calling the SOC.','sudo stop that','You found a vuln in my patience.','Permission denied: booping.','Segfault... just kidding'];
+    var lastTap=0,COOL=2500,bt=null;
+    function react(){
+      var now=Date.now();if(now-lastTap<COOL)return;lastTap=now;
+      try{model.motion('Tap');}catch(e){}
+      if(bubble){
+        bubble.textContent=MSGS[Math.floor(Math.random()*MSGS.length)];
+        bubble.classList.add('show');clearTimeout(bt);
+        bt=setTimeout(function(){bubble.classList.remove('show');},3200);
+      }
+    }
+    var cv=document.getElementById('l2d-canvas');
+    if(cv)cv.addEventListener('pointerdown',react);
+    try{model.on('hit',react);}catch(e){}
+    // hide/show
+    hideBtn.addEventListener('click',function(){
+      wrap.classList.add('hidden');
+      setTimeout(function(){wrap.style.display='none';showBtn.style.display='flex';},400);
+    });
+    showBtn.addEventListener('click',function(){
+      wrap.style.display='block';showBtn.style.display='none';
+      requestAnimationFrame(function(){wrap.classList.remove('hidden');});
+    });
+  }).catch(function(e){console.warn('[live2d]',e);});
+});
+</script>
+</body>
+</html>

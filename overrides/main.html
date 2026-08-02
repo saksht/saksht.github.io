@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block scripts %}
+{{ super() }}
+{% raw %}
+<!-- Live2D + cursor + tap bubbles on ALL pages -->
+
+<!-- Cursor -->
+<div id="cur-dot" style="position:fixed;top:0;left:0;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:9999;opacity:0;will-change:transform;background:radial-gradient(circle at 35% 35%,#fff,#4d9fff 50%,#1b4fa0);box-shadow:0 0 10px 3px rgba(77,159,255,0.9),0 0 28px 6px rgba(77,159,255,0.3);transition:opacity .3s"></div>
+<div id="cur-ring" style="position:fixed;top:0;left:0;width:34px;height:34px;border-radius:50%;pointer-events:none;z-index:9998;opacity:0;will-change:transform;border:1.5px solid rgba(77,159,255,0.55);transition:opacity .3s,width .18s,height .18s,border-color .18s"></div>
+<style>
+.md-content *,.md-header *,.md-sidebar *{cursor:none!important}
+#l2d-wrap{position:fixed;left:0;bottom:0;width:200px;height:300px;z-index:90;pointer-events:none;transition:opacity .4s,transform .4s;overflow:hidden}
+#l2d-wrap.hidden{opacity:0;transform:translateY(60px)}
+#l2d-canvas{width:100%;height:100%;pointer-events:auto}
+#l2d-hide{position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;background:#121a27;border:1px solid #1f2b3a;color:#8595a8;font-size:14px;line-height:1;pointer-events:auto;opacity:0;transition:opacity .25s;z-index:2;cursor:pointer!important}
+#l2d-wrap:hover #l2d-hide{opacity:1}
+#l2d-show{position:fixed;left:16px;bottom:16px;z-index:90;width:40px;height:40px;border-radius:50%;background:#121a27;border:1px solid #1f2b3a;color:#4d9fff;display:none;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 20px rgba(0,0,0,0.4);transition:transform .2s;cursor:pointer!important}
+#l2d-bubble{position:fixed;left:16px;bottom:310px;max-width:220px;z-index:95;background:#fff;color:#1a1a2e;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;padding:10px 14px;border-radius:16px;border-bottom-left-radius:4px;box-shadow:0 8px 24px rgba(0,0,0,0.3);opacity:0;transform:translateY(8px) scale(.95);transition:opacity .25s,transform .25s;pointer-events:none;line-height:1.4}
+#l2d-bubble.show{opacity:1;transform:translateY(0) scale(1)}
+#l2d-bubble::after{content:'';position:absolute;left:16px;bottom:-6px;width:12px;height:12px;background:#fff;transform:rotate(45deg)}
+@media(max-width:720px){#l2d-wrap,#l2d-bubble{display:none}}
+@media(prefers-reduced-motion:reduce){#l2d-wrap{display:none}}
+</style>
+
+<div id="l2d-wrap"><canvas id="l2d-canvas"></canvas><button id="l2d-hide">×</button></div>
+<div id="l2d-bubble"></div>
+<button id="l2d-show">◕</button>
+
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js"></script>
+<script>window.PIXI=PIXI;</script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
+
+<script>
+// Cursor
+(function(){
+  var dot=document.getElementById('cur-dot'),ring=document.getElementById('cur-ring');
+  if(!dot)return;
+  var mx=0,my=0,ox=0,oy=0,rx=0,ry=0,shown=false;
+  window.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    if(!shown){dot.style.opacity='1';ring.style.opacity='1';shown=true;}
+  },{passive:true});
+  window.addEventListener('mouseleave',function(){dot.style.opacity='0';ring.style.opacity='0';shown=false;});
+  (function loop(){
+    ox+=(mx-ox)*0.4;oy+=(my-oy)*0.4;
+    rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+    dot.style.transform='translate('+(ox-5)+'px,'+(oy-5)+'px)';
+    ring.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)';
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener('mouseover',function(e){
+    if(e.target.closest('a,button')){ring.style.width='54px';ring.style.height='54px';ring.style.borderColor='rgba(125,196,255,0.9)';}
+    else{ring.style.width='34px';ring.style.height='34px';ring.style.borderColor='rgba(77,159,255,0.55)';}
+  });
+})();
+
+// Logo click → home
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.md-header__button.md-logo,.md-header__title').forEach(function(el){
+    el.style.cursor='pointer';
+    el.addEventListener('click',function(e){e.preventDefault();window.location.href='https://saksht.github.io';});
+  });
+});
+
+// Live2D
+window.addEventListener('load',function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var MODEL='/live2d/model/hiyori_free_t08.model3.json';
+  var wrap=document.getElementById('l2d-wrap');
+  var hideBtn=document.getElementById('l2d-hide');
+  var showBtn=document.getElementById('l2d-show');
+  var bubble=document.getElementById('l2d-bubble');
+  if(!window.PIXI||!PIXI.live2d)return;
+  if(PIXI.live2d.Live2DModel&&PIXI.Ticker)PIXI.live2d.Live2DModel.registerTicker(PIXI.Ticker);
+  var app=new PIXI.Application({view:document.getElementById('l2d-canvas'),autoStart:true,resizeTo:wrap,backgroundAlpha:0,antialias:true});
+  PIXI.live2d.Live2DModel.from(MODEL,{autoInteract:false}).then(function(model){
+    app.stage.addChild(model);
+    window.__l2dModel=model;
+    function fit(){
+      var mh=(model.internalModel&&model.internalModel.height)?model.internalModel.height:model.height;
+      var s=(app.renderer.height/mh)*2.1;
+      model.scale.set(s);model.x=app.renderer.width/2;
+      model.y=app.renderer.height*0.06;model.anchor.set(0.5,0);
+    }
+    fit();window.addEventListener('resize',fit);
+    var tX=window.innerWidth/2,tY=window.innerHeight/2,fX=tX,fY=tY;
+    window.addEventListener('mousemove',function(e){tX=e.clientX;tY=e.clientY;},{passive:true});
+    app.ticker.add(function(){
+      if(wrap.classList.contains('hidden'))return;
+      fX+=(tX-fX)*0.06;fY+=(tY-fY)*0.06;model.focus(fX,fY);
+    });
+    var MSGS=['Stop poking me! It tickles!','Was that just an accidental touch?','Hey, I\'m reading writeups here','root access denied','Focus on the writeups, not me~','One more poke and I\'m calling the SOC.','sudo stop that','You found a vuln in my patience.','Permission denied: booping.','Segfault... just kidding'];
+    var lastTap=0,COOL=2500,bt=null;
+    function react(){
+      var now=Date.now();if(now-lastTap<COOL)return;lastTap=now;
+      try{model.motion('Tap');}catch(e){}
+      if(bubble){
+        bubble.textContent=MSGS[Math.floor(Math.random()*MSGS.length)];
+        bubble.classList.add('show');clearTimeout(bt);
+        bt=setTimeout(function(){bubble.classList.remove('show');},3200);
+      }
+    }
+    var cv=document.getElementById('l2d-canvas');
+    if(cv)cv.addEventListener('pointerdown',react);
+    try{model.on('hit',react);}catch(e){}
+    hideBtn.addEventListener('click',function(){
+      wrap.classList.add('hidden');
+      setTimeout(function(){wrap.style.display='none';showBtn.style.display='flex';},400);
+    });
+    showBtn.addEventListener('click',function(){
+      wrap.style.display='block';showBtn.style.display='none';
+      requestAnimationFrame(function(){wrap.classList.remove('hidden');});
+    });
+  }).catch(function(e){console.warn('[live2d]',e);});
+});
+</script>
+{% endraw %}
+{% endblock %}

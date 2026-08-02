@@ -1,0 +1,73 @@
+site_name: Pexpo // HTB Writeups
+site_description: HackTheBox machine walkthroughs by Pexpo
+site_author: Pexpo
+site_url: https://saksht.github.io
+
+theme:
+  name: material
+  custom_dir: overrides
+  palette:
+    - scheme: slate
+      primary: red
+      accent: red
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - blog:
+      blog_dir: blog
+      post_url_format: "{slug}"
+      archive: false
+      categories: true
+      post_readtime: true
+      post_readtime_words_per_minute: 200
+  - tags
+
+repo_url: https://github.com/saksht/saksht.github.io
+repo_name: saksht/saksht.github.io
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/saksht
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/akshat-singh-0971832b5
+  generator: false
+
+extra_css:
+  - assets/extra.css
+
+nav:
+  - Blog: blog/index.md
+  - Writeups:
+    - Hercules (Insane): writeups/hercules.md
+    - Odyssey (Insane): writeups/odyssey.md
+    - PingPong (Insane): writeups/pingpong.md
+    - Cohort (Easy): writeups/cohort.md

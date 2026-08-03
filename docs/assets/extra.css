@@ -1,14 +1,30 @@
 :root {
-  --md-primary-fg-color: #e11d48;
-  --md-accent-fg-color: #f43f5e;
+  --md-primary-fg-color: #a78bfa;
+  --md-accent-fg-color: #c4b5fd;
+  --md-default-bg-color: #0a0812;
 }
 [data-md-color-scheme="slate"] {
-  --md-default-bg-color: #0d1117;
-  --md-code-bg-color: #161b22;
+  --md-default-bg-color: #0a0812;
+  --md-code-bg-color: #13102a;
+  --md-typeset-color: #e8e0f5;
 }
 .md-header {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(135deg, #0e0b18 0%, #13102a 100%);
+}
+.md-typeset h1 {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #e8e0f5;
 }
 .md-typeset pre > code {
-  border-left: 3px solid var(--md-primary-fg-color);
+  border-left: 3px solid #a78bfa;
 }
+.md-typeset a {
+  color: #a78bfa;
+}
+.md-typeset a:hover {
+  color: #c4b5fd;
+}
+/* text hover glow on writeup pages */
+.md-typeset h2,.md-typeset h3{transition:text-shadow .25s}
+.md-typeset h2:hover,.md-typeset h3:hover{text-shadow:0 0 24px rgba(167,139,250,0.25)}

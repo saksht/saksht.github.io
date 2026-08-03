@@ -9,36 +9,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#080b10;--bg-soft:#0c111a;--surface:#0f1621;--surface-hi:#141d2b;
-  --line:#1a2436;--text:#dde4f0;--text-dim:#7a8fa8;--text-faint:#4a5e78;
-  --accent:#5ba3f5;--accent-glow:rgba(91,163,245,0.3);
-  --danger:#f05d5d;--danger-glow:rgba(240,93,93,0.28);--success:#36d47e;
-  --glow-soft:rgba(91,163,245,0.08);
+  --bg:#0a0812;--bg-soft:#0e0b18;--surface:#13102a;--surface-hi:#1a163a;
+  --line:#251f45;--text:#e8e0f5;--text-dim:#9388b8;--text-faint:#5a4f80;
+  --accent:#a78bfa;--accent-glow:rgba(167,139,250,0.3);
+  --danger:#f87171;--danger-glow:rgba(248,113,113,0.28);--success:#34d399;
+  --warm:#f9a8d4;--warm-glow:rgba(249,168,212,0.2);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{background:radial-gradient(ellipse 120% 80% at 50% -10%,#0d1829 0%,#080b10 55%);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:0.12;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 70%);z-index:0;pointer-events:none}
+body{background:radial-gradient(ellipse 110% 70% at 50% -5%,#1a0f35 0%,#0d0a1f 40%,#0a0812 70%);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:0.18;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 20%,transparent 70%);z-index:0;pointer-events:none}
 
 /* CURSOR — three-ring concentric */
 *{cursor:none!important}
 #cur-dot{
   position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;
   pointer-events:none;z-index:9999;opacity:0;will-change:transform;
-  background:#fff;
-  box-shadow:0 0 4px 2px rgba(255,255,255,0.9),0 0 10px 3px rgba(255,220,150,0.6);
+  background:#e9d5ff;
+  box-shadow:0 0 4px 2px rgba(233,213,255,0.9),0 0 10px 3px rgba(167,139,250,0.7);
 }
 #cur-mid{
   position:fixed;top:0;left:0;width:22px;height:22px;border-radius:50%;
   pointer-events:none;z-index:9998;opacity:0;will-change:transform;
-  border:1.5px solid rgba(255,160,60,0.9);
-  box-shadow:0 0 6px 2px rgba(255,140,40,0.5),inset 0 0 4px rgba(255,160,60,0.15);
+  border:1.5px solid rgba(167,139,250,0.9);
+  box-shadow:0 0 6px 2px rgba(167,139,250,0.5),inset 0 0 4px rgba(167,139,250,0.15);
 }
 #cur-outer{
   position:fixed;top:0;left:0;width:40px;height:40px;border-radius:50%;
   pointer-events:none;z-index:9997;opacity:0;will-change:transform;
-  border:1px solid rgba(255,120,30,0.35);
-  box-shadow:0 0 12px 4px rgba(255,100,20,0.18),0 0 28px 8px rgba(255,80,10,0.08);
+  border:1px solid rgba(249,168,212,0.35);
+  box-shadow:0 0 12px 4px rgba(249,168,212,0.18),0 0 28px 8px rgba(249,168,212,0.08);
 }
 @media(max-width:720px){#cur-dot,#cur-mid,#cur-outer{display:none}*{cursor:auto!important}}
 @media(prefers-reduced-motion:reduce){#cur-dot,#cur-mid,#cur-outer{display:none}*{cursor:auto!important}}
@@ -60,11 +60,11 @@ nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px) saturate(180%);
 .hero{padding:110px 0 80px}
 .hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:0.08em;margin-bottom:24px;opacity:0;animation:fadeUp .6s .1s forwards}
 .hero h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(40px,7vw,74px);line-height:1.02;letter-spacing:-0.03em;margin-bottom:24px;opacity:0;animation:fadeUp .7s .25s forwards}
-.hero h1 .grad{background:linear-gradient(120deg,var(--accent),#7dc4ff 60%,var(--text));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero h1 .grad{background:linear-gradient(120deg,var(--accent),var(--warm) 60%,#e0d4ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero-sub{font-size:18px;color:var(--text-dim);max-width:540px;margin-bottom:40px;opacity:0;animation:fadeUp .7s .4s forwards}
 .hero-cta{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fadeUp .7s .55s forwards}
 .btn{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;padding:13px 26px;border-radius:10px;text-decoration:none;transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:9px}
-.btn-primary{background:var(--accent);color:#04121f;box-shadow:0 4px 24px var(--accent-glow)}
+.btn-primary{background:var(--accent);color:#120a2e;box-shadow:0 4px 24px var(--accent-glow)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow)}
 .btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
 .btn-ghost:hover{transform:translateY(-2px);border-color:var(--accent);color:var(--accent)}
@@ -137,6 +137,26 @@ footer{border-top:1px solid var(--line);padding:44px 0;margin-top:40px}
 @media(prefers-reduced-motion:reduce){#l2d-wrap{display:none}}
 
 @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+/* text hover lift */
+.hero-sub,.card-chain,.focus-card p{transition:color .2s,text-shadow .2s}
+.hero-sub:hover,.card-chain:hover,.focus-card p:hover{
+  color:var(--text);
+  text-shadow:0 0 20px rgba(167,139,250,0.25);
+}
+.hero h1,.sec h2,.focus-card h3{transition:text-shadow .25s}
+.hero h1:hover,.sec h2:hover,.focus-card h3:hover{
+  text-shadow:0 0 30px rgba(167,139,250,0.2);
+}
+/* nav link hover: slide-up underline */
+.nav-links a{position:relative;padding-bottom:2px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--accent);transition:width .25s;border-radius:2px}
+.nav-links a:hover::after{width:100%}
+/* card arrow on hover */
+.card:hover .card-name{color:var(--accent);transition:color .2s}
+/* eyebrow glow */
+.sec-eyebrow,.hero-eyebrow{transition:text-shadow .2s}
+.sec-eyebrow:hover,.hero-eyebrow:hover{text-shadow:0 0 16px rgba(167,139,250,0.5)}
 </style>
 </head>
 <body>

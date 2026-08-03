@@ -62,7 +62,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 .panel nav a svg { width: 16px; height: 16px; fill: currentColor; opacity: 0.5; flex-shrink: 0; }
 
 /* ---- GLASS BOX ---- */
-.center { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
+.center { position: fixed; top: 58%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
 .glass {
   background: rgba(20,12,42,0.72);
   backdrop-filter: blur(28px) saturate(200%);
@@ -134,6 +134,22 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 .ic.i4:hover { border-color: rgba(167,139,250,.6); color: #c4b5fd; background: rgba(167,139,250,.07); box-shadow: 0 8px 26px rgba(167,139,250,.2); }
 .ic.i5:hover { border-color: rgba(249,168,212,.6); color: #f9a8d4; background: rgba(249,168,212,.07); box-shadow: 0 8px 26px rgba(249,168,212,.2); }
 .ic.i6:hover { border-color: rgba(251,191,36,.6); color: #fbbf24; background: rgba(251,191,36,.05); box-shadow: 0 8px 26px rgba(251,191,36,.15); }
+
+
+/* guardian art */
+.guardian {
+  display: block;
+  width: min(320px, 55vw);
+  margin: 0 auto 6px;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 0 18px rgba(200,30,20,0.6)) drop-shadow(0 0 40px rgba(180,20,10,0.3));
+  animation: fadeUp .6s .1s both, guardianFloat 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes guardianFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
 
 @keyframes fadeUp { from { opacity:0; transform: translateY(14px); } to { opacity:1; transform: translateY(0); } }
 
@@ -213,6 +229,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 </div>
 
 <main class="center">
+  <img src="guardian.png" class="guardian" alt="">
   <div class="glass">
     <div class="tline">#define <span class="c1">root</span> (void *)alloc_pwn(<span class="c2">GFP_ATOMIC</span>)</div>
     <div class="icons">
@@ -428,6 +445,7 @@ function toggleMenu() {
     })();
   }
 })();
+
 
 // ---- LIVE2D + BUBBLES ----
 window.addEventListener('load', function() {

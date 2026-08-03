@@ -63,11 +63,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 
 /* ---- GLASS BOX ---- */
 .center { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
-.eyebrow {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  color: rgba(167,139,250,0.25); letter-spacing: 0.35em; text-transform: uppercase;
-  margin-bottom: 14px; animation: fadeUp .5s .1s both;
-}
 .glass {
   background: rgba(20,12,42,0.72);
   backdrop-filter: blur(28px) saturate(200%);
@@ -75,6 +70,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
   border: 1px solid rgba(167,139,250,0.35);
   border-radius: 20px;
   padding: 22px 32px 26px;
+  position: relative;
+  overflow: hidden;
   box-shadow:
     0 0 0 1px rgba(167,139,250,0.1) inset,
     0 0 40px rgba(167,139,250,0.06) inset,
@@ -82,6 +79,31 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
     0 0 80px rgba(167,139,250,0.08);
   animation: fadeUp .6s .2s both;
 }
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 120%, rgba(167,139,250,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 20% 50%, rgba(249,168,212,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 50%, rgba(100,200,255,0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 20px;
+}
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(167,139,250,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167,139,250,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 20px;
+}
+.tline, .icons { position: relative; z-index: 1; }
 .tline {
   font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
   color: #6b5f90; letter-spacing: 0.05em; margin-bottom: 20px; white-space: nowrap;
@@ -191,7 +213,6 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 </div>
 
 <main class="center">
-  <div class="eyebrow">// pexpo</div>
   <div class="glass">
     <div class="tline">#define <span class="c1">root</span> (void *)alloc_pwn(<span class="c2">GFP_ATOMIC</span>)</div>
     <div class="icons">

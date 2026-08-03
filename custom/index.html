@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-html, body { width: 100%; height: 100%; overflow: hidden; background: #04030a; font-family: 'Space Grotesk', sans-serif; color: #e8e0f5; -webkit-font-smoothing: antialiased; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; font-family: 'Space Grotesk', sans-serif; color: #e8e0f5; -webkit-font-smoothing: antialiased; }
 
 /* ---- BACKGROUND CANVAS ---- */
 #bg { position: fixed; inset: 0; z-index: 0; }
@@ -17,7 +17,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #04030a; f
 /* ---- VIGNETTE ---- */
 .vig {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(ellipse 60% 60% at 50% 50%, transparent 10%, rgba(4,3,10,0.55) 55%, rgba(4,3,10,0.93) 100%);
+  background: radial-gradient(ellipse 55% 55% at 50% 50%, transparent 5%, rgba(2,1,8,0.6) 45%, rgba(2,1,8,0.96) 100%);
 }
 
 /* ---- TOP BAR ---- */
@@ -65,32 +65,36 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #04030a; f
 .center { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
 .eyebrow {
   font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  color: rgba(167,139,250,0.7); letter-spacing: 0.35em; text-transform: uppercase;
+  color: rgba(167,139,250,0.25); letter-spacing: 0.35em; text-transform: uppercase;
   margin-bottom: 14px; animation: fadeUp .5s .1s both;
 }
 .glass {
-  background: rgba(8,5,18,0.52);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(167,139,250,0.13);
+  background: rgba(20,12,42,0.72);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(167,139,250,0.35);
   border-radius: 20px;
   padding: 22px 32px 26px;
-  box-shadow: 0 0 0 1px rgba(167,139,250,0.04) inset, 0 20px 60px rgba(0,0,0,0.7);
+  box-shadow:
+    0 0 0 1px rgba(167,139,250,0.1) inset,
+    0 0 40px rgba(167,139,250,0.06) inset,
+    0 20px 60px rgba(0,0,0,0.8),
+    0 0 80px rgba(167,139,250,0.08);
   animation: fadeUp .6s .2s both;
 }
 .tline {
   font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
-  color: #3d3260; letter-spacing: 0.05em; margin-bottom: 20px; white-space: nowrap;
+  color: #6b5f90; letter-spacing: 0.05em; margin-bottom: 20px; white-space: nowrap;
 }
 .tline .c1 { color: #a78bfa; }
 .tline .c2 { color: #f9a8d4; }
 .icons { display: flex; gap: 11px; justify-content: center; }
 .ic {
   width: 46px; height: 46px; border-radius: 50%;
-  border: 1px solid rgba(167,139,250,0.15);
-  background: rgba(12,8,26,0.8);
+  border: 1px solid rgba(167,139,250,0.25);
+  background: rgba(25,15,50,0.85);
   display: flex; align-items: center; justify-content: center;
-  text-decoration: none; color: #4a3f70;
+  text-decoration: none; color: #6b5f90;
   transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .25s, color .25s, background .25s, box-shadow .25s;
   position: relative;
 }
@@ -187,7 +191,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #04030a; f
 </div>
 
 <main class="center">
-  <div class="eyebrow">pexpo</div>
+  <div class="eyebrow">// pexpo</div>
   <div class="glass">
     <div class="tline">#define <span class="c1">root</span> (void *)alloc_pwn(<span class="c2">GFP_ATOMIC</span>)</div>
     <div class="icons">

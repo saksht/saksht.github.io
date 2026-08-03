@@ -28,6 +28,8 @@ jobs:
         run: cp custom/index.html site/index.html
       - name: Copy Live2D
         run: cp -r custom/live2d site/live2d
+      - name: Copy guardian
+        run: cp custom/guardian.png site/guardian.png
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

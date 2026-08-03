@@ -5,12 +5,12 @@
 <!-- Live2D + cursor + tap bubbles on ALL pages -->
 
 <!-- Cursor -->
-<div id="cur-bubble" style="position:fixed;top:0;left:0;width:28px;height:28px;border-radius:50%;pointer-events:none;z-index:9999;opacity:0;will-change:transform;background:radial-gradient(circle at 38% 32%,rgba(255,255,255,0.95) 0%,rgba(140,200,255,0.7) 25%,rgba(70,140,255,0.35) 55%,transparent 75%);box-shadow:0 0 8px 2px rgba(91,163,245,1),0 0 20px 6px rgba(91,163,245,0.55),0 0 45px 12px rgba(91,163,245,0.2);transition:opacity .4s,width .2s,height .2s;mix-blend-mode:screen"></div>
-<div id="cur-trail" style="position:fixed;top:0;left:0;width:48px;height:48px;border-radius:50%;pointer-events:none;z-index:9998;opacity:0;will-change:transform;background:radial-gradient(circle,rgba(91,163,245,0.12) 0%,transparent 70%);transition:opacity .4s"></div>
-<canvas id="click-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997"></canvas>
+<div id="cur-dot" style="position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;opacity:0;will-change:transform;background:#fff;box-shadow:0 0 4px 2px rgba(255,255,255,0.9),0 0 10px 3px rgba(255,220,150,0.6)"></div>
+<div id="cur-mid" style="position:fixed;top:0;left:0;width:22px;height:22px;border-radius:50%;pointer-events:none;z-index:9998;opacity:0;will-change:transform;border:1.5px solid rgba(255,160,60,0.9);box-shadow:0 0 6px 2px rgba(255,140,40,0.5)"></div>
+<div id="cur-outer" style="position:fixed;top:0;left:0;width:40px;height:40px;border-radius:50%;pointer-events:none;z-index:9997;opacity:0;will-change:transform;border:1px solid rgba(255,120,30,0.35);box-shadow:0 0 12px 4px rgba(255,100,20,0.18)"></div>
+<canvas id="click-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9996"></canvas>
 <style>
-#cur-bubble.big{width:38px!important;height:38px!important;box-shadow:0 0 12px 4px rgba(91,163,245,1),0 0 30px 10px rgba(91,163,245,0.55),0 0 60px 18px rgba(91,163,245,0.2)!important}
-@media(max-width:720px){#cur-bubble,#cur-trail,#click-canvas{display:none!important}}
+@media(max-width:720px){#cur-dot,#cur-mid,#cur-outer,#click-canvas{display:none!important}}
 </style>
 <style>
 .md-content *,.md-header *,.md-sidebar *{cursor:none!important}
@@ -37,36 +37,35 @@
 <script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js"></script>
 
 <script>
-// Cursor: illuminated bubble + click particles
+// Cursor: three-ring concentric
 (function(){
-  var bubble=document.getElementById('cur-bubble');
-  var trail=document.getElementById('cur-trail');
+  var dot=document.getElementById('cur-dot');
+  var mid=document.getElementById('cur-mid');
+  var outer=document.getElementById('cur-outer');
   var canvas=document.getElementById('click-canvas');
-  if(!bubble)return;
+  if(!dot)return;
   var ctx=canvas?canvas.getContext('2d'):null;
   if(canvas){canvas.width=window.innerWidth;canvas.height=window.innerHeight;window.addEventListener('resize',function(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;});}
-  var mx=0,my=0,bx=0,by=0,tx=0,ty=0,shown=false;
+  var mx=0,my=0,dx=0,dy=0,mx2=0,my2=0,ox=0,oy=0,shown=false;
   window.addEventListener('mousemove',function(e){
     mx=e.clientX;my=e.clientY;
-    if(!shown){bubble.style.opacity='1';trail.style.opacity='1';shown=true;}
+    if(!shown){dot.style.opacity='1';mid.style.opacity='1';outer.style.opacity='1';shown=true;}
   },{passive:true});
-  window.addEventListener('mouseleave',function(){bubble.style.opacity='0';trail.style.opacity='0';shown=false;});
+  window.addEventListener('mouseleave',function(){dot.style.opacity='0';mid.style.opacity='0';outer.style.opacity='0';shown=false;});
   (function loop(){
-    bx+=(mx-bx)*0.42;by+=(my-by)*0.42;
-    tx+=(mx-tx)*0.10;ty+=(my-ty)*0.10;
-    bubble.style.transform='translate('+(bx-14)+'px,'+(by-14)+'px)';
-    trail.style.transform='translate('+(tx-24)+'px,'+(ty-24)+'px)';
+    dx+=(mx-dx)*0.55;dy+=(my-dy)*0.55;
+    mx2+=(mx-mx2)*0.22;my2+=(my-my2)*0.22;
+    ox+=(mx-ox)*0.10;oy+=(my-oy)*0.10;
+    dot.style.transform='translate('+(dx-4)+'px,'+(dy-4)+'px)';
+    mid.style.transform='translate('+(mx2-11)+'px,'+(my2-11)+'px)';
+    outer.style.transform='translate('+(ox-20)+'px,'+(oy-20)+'px)';
     requestAnimationFrame(loop);
   })();
-  document.addEventListener('mouseover',function(e){
-    if(e.target.closest('a,button')){bubble.classList.add('big');}
-    else{bubble.classList.remove('big');}
-  });
   var particles=[];
   function spawnParticles(x,y){
-    for(var i=0;i<14;i++){
-      var angle=Math.random()*Math.PI*2,speed=1.5+Math.random()*3.5;
-      particles.push({x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,size:1.5+Math.random()*2.5});
+    for(var i=0;i<16;i++){
+      var angle=Math.random()*Math.PI*2,speed=1.5+Math.random()*4;
+      particles.push({x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,size:1.2+Math.random()*2.2,warm:Math.random()>0.5});
     }
   }
   window.addEventListener('click',function(e){spawnParticles(e.clientX,e.clientY);});
@@ -75,12 +74,12 @@
       ctx.clearRect(0,0,canvas.width,canvas.height);
       for(var i=particles.length-1;i>=0;i--){
         var p=particles[i];
-        p.x+=p.vx;p.y+=p.vy;p.vx*=0.92;p.vy*=0.92;p.life-=0.035;
+        p.x+=p.vx;p.y+=p.vy;p.vx*=0.91;p.vy*=0.91;p.life-=0.032;
         if(p.life<=0){particles.splice(i,1);continue;}
         ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
-        ctx.fillStyle='rgba(91,163,245,'+p.life+')';
-        ctx.shadowBlur=8*p.life;ctx.shadowColor='rgba(91,163,245,0.8)';
-        ctx.fill();ctx.shadowBlur=0;
+        if(p.warm){ctx.fillStyle='rgba(255,140,40,'+p.life+')';ctx.shadowColor='rgba(255,120,20,0.8)';}
+        else{ctx.fillStyle='rgba(255,220,180,'+p.life+')';ctx.shadowColor='rgba(255,200,100,0.8)';}
+        ctx.shadowBlur=10*p.life;ctx.fill();ctx.shadowBlur=0;
       }
       requestAnimationFrame(animP);
     })();

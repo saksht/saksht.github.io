@@ -37,8 +37,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 #cur-outer{
   position:fixed;top:0;left:0;width:44px;height:44px;border-radius:50%;
   pointer-events:none;z-index:9997;opacity:0;will-change:transform;
-  border:1px solid rgba(100,255,200,0.25);
-  box-shadow:0 0 16px 6px rgba(80,220,180,0.12),0 0 36px 12px rgba(80,220,180,0.06);
+  border:1.5px solid rgba(255,220,50,0.7);
+  box-shadow:0 0 14px 4px rgba(255,210,0,0.5),0 0 32px 10px rgba(255,200,0,0.25),0 0 56px 18px rgba(255,190,0,0.1);
 }
 @media(max-width:720px){#cur-dot,#cur-mid,#cur-outer{display:none}*{cursor:auto!important}}
 @media(prefers-reduced-motion:reduce){#cur-dot,#cur-mid,#cur-outer{display:none}*{cursor:auto!important}}
@@ -138,30 +138,36 @@ footer{border-top:1px solid var(--line);padding:44px 0;margin-top:40px}
 
 @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
 
-/* GLASSY ZOOM text hover */
-.hero h1{transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s}
-.hero h1:hover{transform:scale(1.012);filter:drop-shadow(0 0 18px rgba(167,139,250,0.35))}
-.hero-sub{transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .2s}
-.hero-sub:hover{transform:scale(1.008) translateY(-1px);color:var(--text)}
-.sec h2{transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s}
-.sec h2:hover{transform:scale(1.015);filter:drop-shadow(0 0 14px rgba(167,139,250,0.3))}
-.card-chain{transition:transform .25s cubic-bezier(.34,1.56,.64,1),color .2s}
-.card-chain:hover{transform:scale(1.01) translateX(3px);color:var(--text)}
-.focus-card h3{transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .3s}
-.focus-card h3:hover{transform:scale(1.04);filter:drop-shadow(0 0 10px rgba(167,139,250,0.4))}
-.focus-card p{transition:transform .25s,color .2s}
-.focus-card p:hover{transform:scale(1.01);color:var(--text)}
-/* nav link hover: slide-up underline */
-.nav-links a{position:relative;padding-bottom:2px;transition:color .2s,transform .2s}
-.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--accent);transition:width .25s;border-radius:2px}
-.nav-links a:hover{transform:translateY(-1px)}
+/* GLASSY ZOOM + GLOW text hover */
+/* hero title - filter glow only (scale conflicts with fadeUp animation) */
+.hero h1{will-change:filter}
+.hero h1:hover{filter:drop-shadow(0 0 22px rgba(167,139,250,0.45)) drop-shadow(0 0 8px rgba(249,168,212,0.3))}
+/* subtitle */
+.hero-sub{display:inline-block;transition:transform .35s cubic-bezier(.34,1.56,.64,1),color .2s,filter .3s}
+.hero-sub:hover{transform:scale(1.015) translateY(-2px);color:var(--text);filter:drop-shadow(0 0 12px rgba(167,139,250,0.2))}
+/* section headings */
+.sec h2{display:inline-block;transition:transform .35s cubic-bezier(.34,1.56,.64,1),filter .3s}
+.sec h2:hover{transform:scale(1.03);filter:drop-shadow(0 0 16px rgba(167,139,250,0.35))}
+/* card attack chains */
+.card-chain{transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .2s}
+.card-chain:hover{transform:scale(1.015) translateX(4px);color:var(--text)}
+/* focus area headings */
+.focus-card h3{transition:transform .35s cubic-bezier(.34,1.56,.64,1),filter .3s}
+.focus-card h3:hover{transform:scale(1.06);filter:drop-shadow(0 0 12px rgba(167,139,250,0.45))}
+/* focus area body text */
+.focus-card p{transition:transform .3s cubic-bezier(.34,1.56,.64,1),color .2s}
+.focus-card p:hover{transform:scale(1.02);color:var(--text)}
+/* nav links */
+.nav-links a{position:relative;padding-bottom:2px;transition:color .2s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--accent);transition:width .3s;border-radius:2px}
+.nav-links a:hover{transform:translateY(-2px) scale(1.05)}
 .nav-links a:hover::after{width:100%}
-/* card name on hover */
-.card-name{transition:color .2s}
-.card:hover .card-name{color:var(--accent)}
+/* card name */
+.card-name{transition:color .2s,filter .2s}
+.card:hover .card-name{color:var(--accent);filter:drop-shadow(0 0 8px rgba(167,139,250,0.5))}
 /* eyebrow */
-.sec-eyebrow,.hero-eyebrow{transition:transform .2s,filter .2s}
-.sec-eyebrow:hover,.hero-eyebrow:hover{transform:translateX(3px);filter:drop-shadow(0 0 8px rgba(167,139,250,0.6))}
+.sec-eyebrow,.hero-eyebrow{display:inline-block;transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .2s}
+.sec-eyebrow:hover,.hero-eyebrow:hover{transform:translateX(4px) scale(1.03);filter:drop-shadow(0 0 10px rgba(167,139,250,0.7))}
 </style>
 </head>
 <body>

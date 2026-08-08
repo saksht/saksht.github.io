@@ -1,6 +1,8 @@
 ---
 title: "Snapped — HackTheBox Writeup"
 date: 2026-06-19
+authors:
+  - pexpo
 categories:
   - Web Exploitation
   - Linux

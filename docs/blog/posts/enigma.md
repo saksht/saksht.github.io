@@ -1,6 +1,6 @@
 ---
 title: "Enigma — HackTheBox Writeup"
-date: 2026-08-03
+date: 2026-06-27
 categories:
   - Web Exploitation
   - Linux
@@ -86,4 +86,4 @@ NFS with `*` ACL is free loot. IMAP is an underused pivot when SSH is key-only. 
 
 ---
 
-*Pexpo | HTB | Aug 2026*
+*Pexpo | HTB | 27 Jun 2026*

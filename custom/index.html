@@ -62,7 +62,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 .panel nav a svg { width: 16px; height: 16px; fill: currentColor; opacity: 0.5; flex-shrink: 0; }
 
 /* ---- GLASS BOX ---- */
-.center { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
+.center { position: fixed; top: 58%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; }
 .glass {
   background: rgba(20,12,42,0.72);
   backdrop-filter: blur(28px) saturate(200%);
@@ -139,10 +139,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 /* guardian art */
 .guardian {
   display: block;
-  width: min(540px, 82vw);
+  width: min(320px, 55vw);
   margin: 0 auto 6px;
   mix-blend-mode: multiply;
-  position: relative; z-index: 1;
   filter: drop-shadow(0 0 18px rgba(200,30,20,0.6)) drop-shadow(0 0 40px rgba(180,20,10,0.3));
   animation: fadeUp .6s .1s both, guardianFloat 4s ease-in-out infinite;
   pointer-events: none;
@@ -231,7 +230,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
 
 <main class="center">
   <img src="guardian.png" class="guardian" alt="">
-  <div class="glass" style="margin-top:-80px;position:relative;z-index:2;">
+  <div class="glass">
     <div class="tline">#define <span class="c1">root</span> (void *)alloc_pwn(<span class="c2">GFP_ATOMIC</span>)</div>
     <div class="icons">
       <a href="https://app.hackthebox.com/users/2753500" target="_blank" class="ic i1" data-t="HackTheBox">
@@ -249,7 +248,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #020108; f
       <a href="/blog/" class="ic i5" data-t="Blog">
         <svg viewBox="0 0 24 24"><path d="M3 18h12v-2H3v2zm0-5h12v-2H3v2zm0-7v2h12V6H3zm14 9.5V6.5l6 5.5-6 5.5z"/></svg>
       </a>
-      <a href="/writeups/hercules/" class="ic i6" data-t="Writeups">
+      <a href="/writeups/enigma/" class="ic i6" data-t="Writeups">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM6 20V4h5v7h7v9H6z"/></svg>
       </a>
     </div>

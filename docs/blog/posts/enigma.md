@@ -1,8 +1,6 @@
 ---
 title: "Enigma — HackTheBox Writeup"
 date: 2026-06-27
-authors:
-  - pexpo
 categories:
   - Web Exploitation
   - Linux
